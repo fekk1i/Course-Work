@@ -1,5 +1,6 @@
 import hashlib
 import random
+import time
 
 class RainbowTable:
     def __init__(self, hashing_algorithm, character_set, password_length, chain_count, chain_length):
@@ -19,7 +20,10 @@ class RainbowTable:
             hash_function = hashlib.sha1
         elif self.hashing_algorithm.lower() == "sha-256":
             hash_function = hashlib.sha256
+        else:
+            raise ValueError("Invalid hashing algorithm.")
 
+        start_time = time.time()
         # Loop to generate chains in the rainbow table
         for i in range(self.chain_count):
             print("Generating chain %d of %d" % (i + 1, self.chain_count))
@@ -34,6 +38,10 @@ class RainbowTable:
 
             # Add the final password and hash to the rainbow table
             self.rainbow_table[current_hash] = current_password
+
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print("Rainbow table generated in %.2f seconds" % elapsed_time)
 
     def reduce_function(self, hash_value, iteration_number):
         # Reduce the hash value to a password using a reduction function
