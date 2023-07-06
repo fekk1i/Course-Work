@@ -77,7 +77,7 @@ rainbow_table.print_rainbow_table()
 hash_to_crack = input("Enter the hash to crack: ")
 
 # Try to crack the hash using the rainbow table
-found_password = rainbow_tablecrack_hash(hash_to_crack)
+found_password = rainbow_table.crack_hash(hash_to_crack)
 
 if found_password:
     print("Password found: %s" % found_password)
