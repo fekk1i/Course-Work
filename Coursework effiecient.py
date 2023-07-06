@@ -37,12 +37,18 @@ class RainbowTable:
             reduced_value += self.character_set[char_index % len(self.character_set)]
         return reduced_value
 
+    def print_rainbow_table(self):
+        print("Rainbow table:")
+        for hash_value, password in self.rainbow_table.items():
+            print("%s,%s" % (hash_value, password))
+
     def crack_hash(self, hash_to_crack):
         found_password = self.rainbow_table.get(hash_to_crack)
         if found_password:
             return found_password
         else:
             return None
+
 
 # Define the parameters
 hashing_algorithm = input("Enter the hashing algorithm used to generate the rainbow table (MD5, SHA-1, or SHA-256): ")
@@ -54,6 +60,9 @@ chain_length = 1000
 # Create a RainbowTable instance and generate the table
 rainbow_table = RainbowTable(hashing_algorithm, character_set, password_length, chain_count, chain_length)
 rainbow_table.generate_rainbow_table()
+
+# Print the rainbow table
+rainbow_table.print_rainbow_table()
 
 # Ask the user for a hash to crack
 hash_to_crack = input("Enter the hash to crack: ")
