@@ -51,16 +51,16 @@ class RainbowTable:
             reduced_value += self.character_set[char_index % len(self.character_set)]
         return reduced_value
     
-    #Ends the time count
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print("Rainbow table generated in %.2f seconds" % elapsed_time)
-
     def print_rainbow_table(self):
         # Print the generated rainbow table
         print("Rainbow table:")
         for hash_value, password in self.rainbow_table.items():
             print("%s,%s" % (hash_value, password))
+
+    #Ends the time count
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print("Rainbow table generated in %.2f seconds" % elapsed_time)
 
     
 
