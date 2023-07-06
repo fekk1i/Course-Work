@@ -1,60 +1,65 @@
 import hashlib
 import random
 
-# Define the character set for passwords
-CHARACTER_SET = "aA1!bB2@cC3#dD4$eE5^fF6&gG7*hH8(iI9)jJ0_kKl+LmM-nNo=OpP?qQr<RsS>tTuUvVwWxXyYzZ"
+class RainbowTable:
+    def __init__(self, hashing_algorithm, character_set, password_length, chain_count, chain_length):
+        self.hashing_algorithm = hashing_algorithm
+        self.character_set = character_set
+        self.password_length = password_length
+        self.chain_count = chain_count
+        self.chain_length = chain_length
+        self.rainbow_table = {}
 
-# Define the number of characters in each password
-PASSWORD_LENGTH = 6
+    def generate_rainbow_table(self):
+        if self.hashing_algorithm.lower() == "md5":
+            hash_function = hashlib.md5
+        elif self.hashing_algorithm.lower() == "sha-1":
+            hash_function = hashlib.sha1
+        elif self.hashing_algorithm.lower() == "sha-256":
+            hash_function = hashlib.sha256
+        else:
+            raise ValueError("Invalid hashing algorithm.")
 
-# Define the number of chains in the rainbow table
-CHAIN_COUNT = 10000
+        for i in range(self.chain_count):
+            print("Generating chain %d of %d" % (i + 1, self.chain_count))
+            current_password = ''.join(random.choice(self.character_set) for _ in range(self.password_length))
+            current_hash = hash_function(current_password.encode()).hexdigest()
+            for j in range(self.chain_length):
+                current_password = self.reduce_function(current_hash, j)
+                current_hash = hash_function(current_password.encode()).hexdigest()
+            self.rainbow_table[current_hash] = current_password
 
-# Define the chain length
-CHAIN_LENGTH = 1000
+    def reduce_function(self, hash_value, iteration_number):
+        reduced_value = ""
+        for i in range(self.password_length):
+            index = (iteration_number + i) % len(hash_value)
+            char_index = int(hash_value[index], 16)
+            reduced_value += self.character_set[char_index % len(self.character_set)]
+        return reduced_value
 
-# Define the reduction function
-def reduce_function(hash_value, iteration_number):
-    reduced_value = ""
-    for i in range(PASSWORD_LENGTH):
-        index = (iteration_number + i) % len(hash_value)
-        char_index = int(hash_value[index], 16)
-        reduced_value += CHARACTER_SET[char_index % len(CHARACTER_SET)]
-    return reduced_value
+    def crack_hash(self, hash_to_crack):
+        found_password = self.rainbow_table.get(hash_to_crack)
+        if found_password:
+            return found_password
+        else:
+            return None
 
-# Ask the user for the hashing algorithm
+# Define the parameters
 hashing_algorithm = input("Enter the hashing algorithm used to generate the rainbow table (MD5, SHA-1, or SHA-256): ")
+character_set = "aA1!bB2@cC3#dD4$eE5^fF6&gG7*hH8(iI9)jJ0_kKl+LmM-nNo=OpP?qQr<RsS>tTuUvVwWxXyYzZ"
+password_length = 6
+chain_count = 10000
+chain_length = 1000
 
-# Generate the rainbow table with a random starting password
-rainbow_table = {}
-if hashing_algorithm.lower() == "md5":
-    hash_function = hashlib.md5
-elif hashing_algorithm.lower() == "sha-1":
-    hash_function = hashlib.sha1
-elif hashing_algorithm.lower() == "sha-256":
-    hash_function = hashlib.sha256
-else:
-    print("Invalid hashing algorithm.")
-    exit()
-for i in range(CHAIN_COUNT):
-    print("Generating chain %d of %d" % (i + 1, CHAIN_COUNT))
-    current_password = ''.join(random.choice(CHARACTER_SET) for _ in range(PASSWORD_LENGTH))
-    current_hash = hash_function(current_password.encode()).hexdigest()
-    for j in range(CHAIN_LENGTH):
-        current_password = reduce_function(current_hash, j)
-        current_hash = hash_function(current_password.encode()).hexdigest()
-    rainbow_table[current_hash] = current_password
-
-# Print the rainbow table to the terminal output
-print("Rainbow table:")
-for hash_value, password in rainbow_table.items():
-    print("%s,%s" % (hash_value, password))
+# Create a RainbowTable instance and generate the table
+rainbow_table = RainbowTable(hashing_algorithm, character_set, password_length, chain_count, chain_length)
+rainbow_table.generate_rainbow_table()
 
 # Ask the user for a hash to crack
 hash_to_crack = input("Enter the hash to crack: ")
 
 # Try to crack the hash using the rainbow table
-found_password = rainbow_table.get(hash_to_crack)
+found_password = rainbow_table.crack_hash(hash_to_crack)
 
 if found_password:
     print("Password found: %s" % found_password)
