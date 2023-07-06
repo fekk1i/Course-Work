@@ -12,9 +12,6 @@ class RainbowTable:
         self.chain_length = chain_length
         self.rainbow_table = {}
 
-    #Starts the time count
-    start_time = time.time()
-
     def generate_rainbow_table(self):
         # Generate the rainbow table based on the specified parameters
         if self.hashing_algorithm.lower() == "md5":
@@ -25,6 +22,9 @@ class RainbowTable:
             hash_function = hashlib.sha256
         else:
             raise ValueError("Invalid hashing algorithm.")
+        
+        # Start the time count
+        start_time = time.time()
         
         # Loop to generate chains in the rainbow table
         for i in range(self.chain_count):
@@ -41,6 +41,10 @@ class RainbowTable:
             # Add the final password and hash to the rainbow table
             self.rainbow_table[current_hash] = current_password
 
+        # End the time count
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print("Rainbow table generated in %.2f seconds" % elapsed_time)
 
     def reduce_function(self, hash_value, iteration_number):
         # Reduce the hash value to a password using a reduction function
@@ -57,13 +61,6 @@ class RainbowTable:
         for hash_value, password in self.rainbow_table.items():
             print("%s,%s" % (hash_value, password))
 
-    #Ends the time count
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print("Rainbow table generated in %.2f seconds" % elapsed_time)
-
-    
-
     def crack_hash(self, hash_to_crack):
         # Attempt to crack the given hash using the rainbow table
         found_password = self.rainbow_table.get(hash_to_crack)
@@ -71,6 +68,7 @@ class RainbowTable:
             return found_password
         else:
             return None
+
 
 
 # Define the parameters for rainbow table generation
