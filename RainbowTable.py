@@ -39,9 +39,6 @@ class RainbowTable:
             # Add the final password and hash to the rainbow table
             self.rainbow_table[current_hash] = current_password
 
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-            print("Rainbow table generated in %.2f seconds" % elapsed_time)
 
     def reduce_function(self, hash_value, iteration_number):
         # Reduce the hash value to a password using a reduction function
@@ -57,6 +54,10 @@ class RainbowTable:
         print("Rainbow table:")
         for hash_value, password in self.rainbow_table.items():
             print("%s,%s" % (hash_value, password))
+
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print("Rainbow table generated in %.2f seconds" % elapsed_time)
 
     def crack_hash(self, hash_to_crack):
         # Attempt to crack the given hash using the rainbow table
